@@ -9,14 +9,20 @@ function escapeHtml(text) {
 
 function renderMarkdown(text) {
   const codeBlocks = [];
-  const withPlaceholders = text.replace(/```([\s\S]*?)```/g, (_, code) => {
+  const inlineCode = [];
+  const blockPlaceholders = text.replace(/```([\s\S]*?)```/g, (_, code) => {
     const token = `__CODE_BLOCK_${codeBlocks.length}__`;
     codeBlocks.push(`<pre><code>${escapeHtml(code)}</code></pre>`);
     return token;
   });
 
-  let safe = escapeHtml(withPlaceholders)
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
+  const inlinePlaceholders = blockPlaceholders.replace(/`([^`]+)`/g, (_, code) => {
+    const token = `__INLINE_CODE_${inlineCode.length}__`;
+    inlineCode.push(`<code>${escapeHtml(code)}</code>`);
+    return token;
+  });
+
+  let safe = escapeHtml(inlinePlaceholders)
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/\[(.*?)\]\((https?:\/\/[^\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
@@ -24,6 +30,10 @@ function renderMarkdown(text) {
 
   codeBlocks.forEach((block, index) => {
     safe = safe.replace(`__CODE_BLOCK_${index}__`, block);
+  });
+
+  inlineCode.forEach((code, index) => {
+    safe = safe.replace(`__INLINE_CODE_${index}__`, code);
   });
 
   return safe;

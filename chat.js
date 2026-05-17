@@ -49,7 +49,7 @@ async function callAI(userMessage, chatId, userId) {
   }
 
   if (normalized.includes('code')) {
-    return 'Sure — here is a quick JavaScript example:\n```js\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\nconsole.log(greet("AIIDK"));\n```';
+    return 'Sure - here is a quick JavaScript example:\n```js\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\nconsole.log(greet("AIIDK"));\n```';
   }
 
   return 'That is an interesting request. I can help you break it down, identify options, and draft a clear next step.';
