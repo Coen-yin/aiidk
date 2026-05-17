@@ -72,12 +72,12 @@ function initAuth({
       await signOut();
     },
     async editProfileName(user) {
-      const nextName = window.prompt('Update display name', user.displayName || '');
-      if (!nextName || !nextName.trim()) {
+      const newDisplayName = window.prompt('Update display name', user.displayName || '');
+      if (!newDisplayName || !newDisplayName.trim()) {
         return;
       }
-      await updateUserDisplayName(user, nextName.trim());
-      userBadge.textContent = nextName.trim();
+      await updateUserDisplayName(user, newDisplayName.trim());
+      userBadge.textContent = newDisplayName.trim();
       showToast('Display name updated');
     },
   };

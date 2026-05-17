@@ -8,14 +8,25 @@ function escapeHtml(text) {
 }
 
 function renderMarkdown(text) {
-  const safe = escapeHtml(text);
-  return safe
-    .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+  const codeBlocks = [];
+  const withPlaceholders = text.replace(/```([\s\S]*?)```/g, (_, code) => {
+    const token = `__CODE_BLOCK_${codeBlocks.length}__`;
+    codeBlocks.push(`<pre><code>${escapeHtml(code)}</code></pre>`);
+    return token;
+  });
+
+  let safe = escapeHtml(withPlaceholders)
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/\[(.*?)\]\((https?:\/\/[^\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
     .replace(/\n/g, '<br>');
+
+  codeBlocks.forEach((block, index) => {
+    safe = safe.replace(`__CODE_BLOCK_${index}__`, block);
+  });
+
+  return safe;
 }
 
 function showSkeleton(container, count = 6) {

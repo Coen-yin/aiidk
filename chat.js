@@ -19,7 +19,7 @@ import {
   updateStreamingMessage,
 } from './ui.js';
 
-const WAIT = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function getDraftKey(uid, chatId) {
   return `draft:${uid}:${chatId || 'new'}`;
@@ -39,8 +39,8 @@ async function callAI(userMessage, chatId, userId) {
         return data.reply;
       }
     }
-  } catch {
-    // fall back to local behavior
+  } catch (error) {
+    console.warn('AI placeholder endpoint failed, using local fallback.', error);
   }
 
   const normalized = userMessage.toLowerCase();
@@ -162,7 +162,7 @@ function initChat({
       visible += char;
       updateStreamingMessage(streamEl, visible);
       scrollToBottom(messagesContainer);
-      await WAIT(10);
+      await wait(10);
     }
 
     removeTempMessage(streamEl);
@@ -195,9 +195,9 @@ function initChat({
 
       try {
         if (action === 'rename-chat') {
-          const next = window.prompt('Rename chat', chats.find((item) => item.id === chatId)?.title || '');
-          if (next && next.trim()) {
-            await updateChatTitle(chatId, next.trim());
+          const newTitle = window.prompt('Rename chat', chats.find((item) => item.id === chatId)?.title || '');
+          if (newTitle && newTitle.trim()) {
+            await updateChatTitle(chatId, newTitle.trim());
             showToast('Chat renamed');
           }
         }
